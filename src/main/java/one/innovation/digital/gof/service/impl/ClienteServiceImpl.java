@@ -1,5 +1,6 @@
 package one.innovation.digital.gof.service.impl;
 
+import one.innovation.digital.gof.exceptions.IdAusenteException;
 import one.innovation.digital.gof.model.Cliente;
 import one.innovation.digital.gof.model.ClienteRepository;
 import one.innovation.digital.gof.model.Endereco;
@@ -27,7 +28,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public Cliente buscarPorId(Long id) {
-        return clienteRepository.findById(id).orElseThrow(() -> new RuntimeException("teste")); // TODO: Melhorar Exception
+        return clienteRepository.findById(id).orElseThrow(() -> new IdAusenteException());
     }
 
     @Override
@@ -42,13 +43,15 @@ public class ClienteServiceImpl implements ClienteService {
             cliente.setId(id);
             this.salvarClienteComCep(cliente);
         }else{
-            // TODO: Melhorar Exception
-            throw new RuntimeException("teste");
+            throw new IdAusenteException();
         }
     }
 
     @Override
     public void deletar(Long id) {
+        if(clienteRepository.findById(id).isEmpty()) {
+            throw new IdAusenteException();
+        }
         clienteRepository.deleteById(id);
     }
 
